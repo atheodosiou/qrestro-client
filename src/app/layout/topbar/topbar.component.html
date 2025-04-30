@@ -1,0 +1,20 @@
+<header class="h-16 bg-white border-b border-gray-200 flex items-center px-4 justify-between">
+    <!-- Mobile menu button -->
+    <button class="md:hidden p-2 rounded hover:bg-gray-100 cursor-pointer" (click)="menuClick.emit()" aria-label="Toggle Menu">
+        <svg class="size-6 text-gray-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <!-- Page title or search bar (optional) -->
+    <div class="text-lg font-semibold text-gray-800">
+        Dashboard
+    </div>
+
+    <!-- Right-side user section -->
+    <div class="flex items-center gap-3">
+        <span class="text-sm text-gray-600">Tasos</span>
+        <img src="https://i.pravatar.cc/32" alt="User" class="w-8 h-8 rounded-full" />
+    </div>
+</header>

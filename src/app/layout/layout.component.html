@@ -1,0 +1,23 @@
+<div class="flex h-screen bg-gray-50 overflow-hidden bg-gray-100">
+    <!-- Sidebar desktop -->
+    <div class="hidden md:block w-64 shrink-0 border-r border-gray-200">
+        <app-sidebar />
+    </div>
+
+    <!-- Sidebar mobile -->
+    @if (isSidebarOpen()) {
+    <div class="fixed inset-0 z-40 bg-black opacity-30 md:hidden" (click)="closeSidebar()"></div>
+    <div class="fixed top-0 left-0 z-50 w-64 h-full bg-white shadow-md md:hidden">
+        <app-sidebar [mobile]="true" (select)="closeSidebar()" />
+    </div>
+    }
+
+    <!-- Main Content Area -->
+    <div class="flex flex-col flex-1 overflow-hidden">
+        <app-topbar (menuClick)="toggleSidebar()" />
+
+        <main class="flex-1 overflow-y-auto p-4">
+            <router-outlet />
+        </main>
+    </div>
+</div>
