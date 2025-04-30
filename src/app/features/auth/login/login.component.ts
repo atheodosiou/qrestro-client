@@ -16,16 +16,29 @@ export class LoginComponent implements AfterViewInit {
   private authService = inject(AuthService);
   private router = inject(Router);
 
+
   ngAfterViewInit(): void {
     google.accounts.id.initialize({
       client_id: environment.googleClientId,
       callback: (response: any) => this.handleGoogleResponse(response),
     });
 
-    google.accounts.id.renderButton(
-      document.getElementById('google-signin'),
-      { theme: 'outline', size: 'large' }
-    );
+  }
+
+  handleCustomGoogleLogin() {
+    google.accounts.id.prompt((notification: any) => {
+      if (notification.isNotDisplayed()) {
+        console.warn('Google login prompt was not displayed:', notification.getNotDisplayedReason());
+      }
+
+      if (notification.isSkippedMoment()) {
+        console.warn('Google login skipped:', notification.getSkippedReason());
+      }
+
+      if (notification.isDismissedMoment()) {
+        console.warn('Google login dismissed:', notification.getDismissedReason());
+      }
+    });
   }
 
   handleGoogleResponse(response: any) {
