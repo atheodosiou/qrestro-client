@@ -46,7 +46,6 @@ export class LoginComponent implements AfterViewInit {
 
     this.authService.loginWithGoogle(idToken).subscribe({
       next: (res) => {
-        localStorage.setItem('token', res.access_token);
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {

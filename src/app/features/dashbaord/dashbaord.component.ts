@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
 import { JsonPipe } from '@angular/common';
+import { AuthStore } from '../../core/stores/auth-store.service';
 
 @Component({
   selector: 'app-dashbaord',
@@ -10,8 +11,9 @@ import { JsonPipe } from '@angular/common';
 })
 export class DashbaordComponent {
   private readonly authService = inject(AuthService);
+  private readonly authStore = inject(AuthStore);
 
-  decoded = this.authService.getDecodedToken();
+  user = this.authStore.currentUser;
 
   logout() {
     this.authService.logout();
