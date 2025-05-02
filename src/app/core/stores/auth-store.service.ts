@@ -6,7 +6,6 @@ import { jwtDecode } from 'jwt-decode';
 export class AuthStore {
     private token = signal<string | null>(localStorage.getItem('token'));
     private user = signal<IUser | null>(null);
-
     readonly isLoggedIn = computed(() => {
         const rawToken = this.token();
         if (!rawToken) return false;
@@ -33,6 +32,16 @@ export class AuthStore {
 
     setUser(user: IUser) {
         this.user.set(user);
+        localStorage.setItem('user', JSON.stringify(user));
+    }
+
+    getStoredUser(): IUser | null {
+        const raw = localStorage.getItem('user');
+        try {
+            return raw ? JSON.parse(raw) : null;
+        } catch {
+            return null;
+        }
     }
 
     clear() {

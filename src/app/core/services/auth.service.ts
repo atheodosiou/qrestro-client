@@ -6,6 +6,7 @@ import { tap, switchMap } from 'rxjs/operators';
 import { AuthStore } from '../stores/auth-store.service';
 import { IUser } from '../models/user.interface';
 import { Router } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -35,10 +36,25 @@ export class AuthService {
   }
 
   initUserFromToken() {
-    if (this.authStore.getToken()) {
+    const token = this.authStore.getToken();
+    if (!token) return;
+
+    const { exp } = jwtDecode<{ exp: number }>(token);
+    const now = Math.floor(Date.now() / 1000);
+
+    if (exp < now) {
+      this.logout();
+      return;
+    }
+
+    const cachedUser = this.authStore.getStoredUser();
+    if (cachedUser) {
+      this.authStore.setUser(cachedUser); // Use cached user immediately
+    } else {
+      // Fallback if cache is missing (rare)
       this.fetchCurrentUser().subscribe({
         next: user => this.authStore.setUser(user),
-        error: () => this.logout(),
+        error: () => this.logout()
       });
     }
   }

@@ -1,20 +1,38 @@
 <header class="h-16 bg-white border-b border-gray-200 flex items-center px-4 justify-between">
     <!-- Mobile menu button -->
-    <button class="md:hidden p-2 rounded hover:bg-gray-100 cursor-pointer" (click)="menuClick.emit()" aria-label="Toggle Menu">
+    <button class="md:hidden p-2 rounded hover:bg-gray-100 cursor-pointer" (click)="menuClick.emit()"
+        aria-label="Toggle Menu">
         <svg class="size-6 text-gray-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
             stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
     </button>
 
-    <!-- Page title or search bar (optional) -->
-    <div class="text-lg font-semibold text-gray-800">
-        Dashboard
-    </div>
+    <!-- Page title -->
+    <div class="text-lg font-semibold text-gray-800">Dashboard</div>
 
-    <!-- Right-side user section -->
+    <!-- User avatar & dropdown -->
     <div class="flex items-center gap-3">
-        <span class="text-sm text-gray-600">Tasos</span>
-        <img src="https://i.pravatar.cc/32" alt="User" class="w-8 h-8 rounded-full" />
+        @if (authStore.currentUser(); as user) {
+        <span class="hidden md:inline text-sm text-gray-600">{{ user.name }}</span>
+        <span class="inline md:hidden text-sm text-gray-600 uppercase">
+            {{ getInitials(user.name) }}
+        </span>
+        <div cdkOverlayOrigin #userTrigger="cdkOverlayOrigin">
+            <img [src]="user.picture || 'https://i.pravatar.cc/32'" (click)="toggleUserMenu()" alt="User"
+                class="w-8 h-8 rounded-full cursor-pointer border border-gray-300" />
+        </div>
+        }
     </div>
 </header>
+
+<ng-template #userMenu>
+    @if (authStore.currentUser(); as user) {
+    <div class="w-52 bg-white border border-gray-200 rounded shadow p-4 space-y-2 text-sm">
+        <button (click)="logout()"
+            class="w-full text-left text-red-600 hover:bg-gray-100 cursor-pointer px-2 py-1 rounded-sm">
+            Logout
+        </button>
+    </div>
+    }
+</ng-template>
