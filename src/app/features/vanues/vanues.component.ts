@@ -1,10 +1,9 @@
-import { NgClass } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import { PageHeaderComponent } from '../../layout/page-header/page-header.component';
 
 @Component({
   selector: 'app-vanues',
-  imports: [NgClass, PageHeaderComponent],
+  imports: [PageHeaderComponent],
   templateUrl: './vanues.component.html',
   styleUrl: './vanues.component.scss'
 })
