@@ -1,13 +1,24 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { IUser } from '../models/user.interface';
-
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({ providedIn: 'root' })
 export class AuthStore {
     private token = signal<string | null>(localStorage.getItem('token'));
     private user = signal<IUser | null>(null);
 
-    readonly isLoggedIn = computed(() => !!this.token() && !!this.user());
+    readonly isLoggedIn = computed(() => {
+        const rawToken = this.token();
+        if (!rawToken) return false;
+
+        try {
+            const { exp } = jwtDecode<{ exp: number }>(rawToken);
+            const now = Math.floor(Date.now() / 1000);
+            return exp > now && !!this.user();
+        } catch {
+            return false;
+        }
+    });
     readonly currentUser = computed(() => this.user());
     readonly userRole = computed(() => this.user()?.role);
 
