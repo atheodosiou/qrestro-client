@@ -1,6 +1,6 @@
 @use "tailwindcss";
+@import "primeicons/primeicons.css";
 @plugin "tailwindcss-primeui";
-
 @layer base {
     html {
       @apply text-gray-800;

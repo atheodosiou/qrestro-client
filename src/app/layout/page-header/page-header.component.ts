@@ -1,4 +1,5 @@
 import { Component, input } from '@angular/core';
+import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 @Component({
   selector: 'app-page-header',
@@ -8,7 +9,4 @@ import { ButtonModule } from 'primeng/button';
 })
 export class PageHeaderComponent {
   title = input.required<string>();
-  actions = input<{
-    label: string
-  }[]>()
 }

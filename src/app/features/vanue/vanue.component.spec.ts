@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { VanuesComponent } from './vanues.component';
+import { VanueComponent } from './vanue.component';
 
 describe('VanuesComponent', () => {
-  let component: VanuesComponent;
-  let fixture: ComponentFixture<VanuesComponent>;
+  let component: VanueComponent;
+  let fixture: ComponentFixture<VanueComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [VanuesComponent]
+      imports: [VanueComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
-    fixture = TestBed.createComponent(VanuesComponent);
+    fixture = TestBed.createComponent(VanueComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

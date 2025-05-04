@@ -1,0 +1,23 @@
+<app-page-header title="Venue"></app-page-header>
+
+<app-table [tableColumns]="cols()" [data]="venues()">
+    <ng-template #customHeader let-columns>
+        <tr>
+            @for (col of columns; track $index) {
+            <th>{{ col.header }}</th>
+            }
+            <th>Actions</th>
+        </tr>
+    </ng-template>
+
+    <ng-template #customBody let-rowData let-columns="columns">
+        <tr>
+            @for (col of columns; track $index) {
+            <td>{{ rowData[col.field] }}</td>
+            }
+            <td>
+                <button class="text-blue-600 underline">Edit</button>
+            </td>
+        </tr>
+    </ng-template>
+</app-table>
