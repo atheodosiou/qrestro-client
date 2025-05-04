@@ -1,31 +1,39 @@
 import { Component, signal, viewChild } from '@angular/core';
-import { PageHeaderComponent } from '../../layout/page-header/page-header.component';
-import { DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
-import { MenuItem } from 'primeng/api';
-import { IMenuItem } from '../../shared/models/menu-item.interface';
+import { DrawerModule } from 'primeng/drawer';
+import { Table } from 'primeng/table';
+import { PageHeaderComponent } from '../../layout/page-header/page-header.component';
 import { MOCK_MENU_ITEMS } from '../../mock/menu-items.mock';
+import { IMenuItem } from '../../shared/models/menu-item.interface';
 import { ITableCol } from '../../shared/models/table-col.interface';
 import { MENU_ITEM_COLUMNS } from './menu-items.constats';
-import { Table, TableModule } from 'primeng/table';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
-import { InputTextModule } from 'primeng/inputtext';
-import { NgStyle } from '@angular/common';
+import { MenuItemTableComponent } from './menu-item-table/menu-item-table.component';
+import { JsonPipe } from '@angular/common';
 @Component({
   selector: 'app-menu-items',
-  imports: [PageHeaderComponent, DrawerModule, ButtonModule, TableModule, IconFieldModule, InputIconModule, InputTextModule, NgStyle],
+  imports: [
+    PageHeaderComponent,
+    DrawerModule,
+    ButtonModule,
+    MenuItemTableComponent,
+    JsonPipe,
+  ],
   templateUrl: './menu-items.component.html',
-  styleUrl: './menu-items.component.scss'
+  styleUrl: './menu-items.component.scss',
 })
 export class MenuItemsComponent {
   menuItems = signal<IMenuItem[]>(MOCK_MENU_ITEMS);
   menuItemsCols = signal<ITableCol[]>(MENU_ITEM_COLUMNS);
   isDarawerVisible = false;
+  selectedRow = signal<IMenuItem | null>(null);
 
-  table = viewChild<Table>('dt')
-
-  globalSearch(event: any) {
-    this.table()?.filterGlobal(event.target?.value, 'contains')
+  setSelectedRow(data: any) {
+    if (!data) {
+      this.selectedRow.set(null);
+      this.isDarawerVisible = false;
+      return;
+    }
+    this.selectedRow.set(data as IMenuItem);
+    this.isDarawerVisible = true;
   }
 }

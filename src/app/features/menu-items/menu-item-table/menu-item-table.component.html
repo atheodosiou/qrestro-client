@@ -1,0 +1,115 @@
+<div class="bg-white p-1 rounded-lg">
+  <p-table
+    #dt
+    dataKey="_id"
+    paginatorDropdownAppendTo="body"
+    selectionMode="single"
+    [columns]="cols()"
+    [value]="items()"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    [paginator]="true"
+    [rows]="5"
+    [rowsPerPageOptions]="[5, 10, 20]"
+    (onRowSelect)="rowSelect.emit($event.data)"
+    (onRowUnselect)="rowSelect.emit(undefined)"
+  >
+    <ng-template #caption>
+      <div class="flex">
+        <p-iconfield iconPosition="left" class="ml-auto">
+          <p-inputicon>
+            <i class="pi pi-search"></i>
+          </p-inputicon>
+          <input
+            pInputText
+            type="text"
+            (input)="globalSearch($event)"
+            placeholder="Search menu items"
+          />
+        </p-iconfield>
+      </div>
+    </ng-template>
+    <ng-template #header let-columns>
+      <tr>
+        @for (col of columns; track $index) {
+        <th
+          [pSortableColumn]="
+            col.field !== 'actions' && col.field !== 'imageUrl'
+              ? col.field
+              : null
+          "
+          [ngStyle]="col.style"
+        >
+          {{ col.header }}
+          @if(col.field!=='actions' && col.field!=='imageUrl'){
+          <p-sortIcon [field]="col.field" />
+          }
+        </th>
+        }
+      </tr>
+    </ng-template>
+    <ng-template #body let-rowData let-columns="columns">
+      <tr [pSelectableRow]="rowData">
+        @for (col of columns; track $index) { @if(col.field==='actions'){
+        <td>
+          <div class="flex flex-row items-center gap-2">
+            <p-button
+              icon="pi pi-pencil"
+              size="small"
+              [rounded]="true"
+              [text]="true"
+            />
+            <p-button
+              icon="pi pi-trash"
+              severity="danger"
+              size="small"
+              [rounded]="true"
+              [text]="true"
+            />
+          </div>
+        </td>
+        } @else if (col.field==='imageUrl') {
+        <td>
+          <img
+            [src]="rowData['imageUrl']"
+            class="rounded-sm"
+            alt="menu item image"
+          />
+        </td>
+        } @else if (col.field==='isAvailable') {
+        <td>
+          <span
+            class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+            [ngClass]="{
+              'bg-green-100 text-green-800': rowData['isAvailable'],
+              'bg-red-100 text-red-800': !rowData['isAvailable']
+            }"
+          >
+            {{ rowData["isAvailable"] ? "Available" : "Unavailable" }}
+          </span>
+        </td>
+        } @else if (col.field==='price') {
+        <td>
+          {{
+            rowData["price"] | currency : "EUR" : "symbol" : "1.2-2" : "el-GR"
+          }}
+        </td>
+        } @else {
+        <td>
+          {{ rowData[col.field] }}
+        </td>
+        } }
+      </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="5">
+          {{
+            filtering()
+              ? "No menu items ware found."
+              : "There are no menu items yet."
+          }}
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
