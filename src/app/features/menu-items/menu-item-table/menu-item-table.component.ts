@@ -26,7 +26,8 @@ import { IMenuItem } from '../../../shared/models/menu-item.interface';
 export class MenuItemTableComponent {
   cols = input.required<ITableCol[]>();
   items = input.required<IMenuItem[]>();
-  rowSelect = output<IMenuItem | IMenuItem[] | undefined>();
+  editRow = output<IMenuItem>();
+  deleteRow = output<IMenuItem>();
 
   table = viewChild<Table>('dt');
   filtering = signal<boolean>(false);

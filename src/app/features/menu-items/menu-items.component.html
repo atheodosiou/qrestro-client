@@ -5,7 +5,7 @@
     <p-button
       label="Add new item"
       size="small"
-      (onClick)="isDarawerVisible = true"
+      (onClick)="addNewItem()"
     ></p-button>
   </app-page-header>
 </div>
@@ -14,7 +14,8 @@
   <app-menu-item-table
     [cols]="menuItemsCols()"
     [items]="menuItems()"
-    (rowSelect)="setSelectedRow($event)"
+    (editRow)="editRow($event)"
+    (deleteRow)="deleteRow($event)"
   ></app-menu-item-table>
 </div>
 
@@ -23,15 +24,66 @@
 </pre>
 <p-drawer
   [(visible)]="isDarawerVisible"
-  [header]="selectedRow() ? 'Edit menu item' : 'Add new menu item'"
-  (onHide)="setSelectedRow(false)"
+  [header]="selectedRow() ? selectedRow()?.name : 'Add new menu item'"
   position="right"
   styleClass="!w-full md:!w-[45rem] lg:!w-[60rem]"
 >
-  <p>
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-    consequat.
-  </p>
+  <form class="grid grid-cols-1 gap-4 md:grid-cols-4">
+    <div>
+      <label for="name">Name</label>
+      <input pInputText id="name" class="w-full" />
+    </div>
+
+    <div>
+      <label for="description">Description</label>
+      <input pInputText id="description" class="w-full" />
+    </div>
+
+    <div>
+      <label for="price">Price</label>
+      <p-inputnumber
+        inputId="price"
+        styleClass="w-full"
+        [minFractionDigits]="2"
+        [maxFractionDigits]="2"
+      />
+    </div>
+
+    <div class="flex flex-col">
+      <label for="available">Availability</label>
+      <p-togglebutton
+        id="available"
+        onLabel="Available"
+        offLabel="Unavailable"
+        styleClass="w-full"
+      />
+    </div>
+
+    <!-- Field 5 - full width -->
+    <div class="lg:col-span-4">
+      <label class="block text-sm font-medium text-gray-700">Image</label>
+      <p-fileupload
+        name="demo[]"
+        url="https://www.primefaces.org/cdn/api/upload.php"
+        (onUpload)="onUpload($event)"
+        [multiple]="true"
+        accept="image/*"
+        maxFileSize="1000000"
+        mode="advanced"
+      >
+        <ng-template #empty>
+          <div>Drag and drop files to here to upload.</div>
+        </ng-template>
+        <ng-template #content>
+          @if (uploadedFiles.length) {
+          <ul>
+            @for (file of uploadedFiles; track $index) {
+            <li>{{ file.name }} - {{ file.size }} bytes</li>
+            }
+          </ul>
+          }
+        </ng-template>
+      </p-fileupload>
+    </div>
+  </form>
 </p-drawer>

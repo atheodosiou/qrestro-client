@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TableComponent } from './table.component';
+import { MenuItemsFormComponent } from './menu-items-form.component';
 
-describe('TableComponent', () => {
-  let component: TableComponent;
-  let fixture: ComponentFixture<TableComponent>;
+describe('MenuItemsFormComponent', () => {
+  let component: MenuItemsFormComponent;
+  let fixture: ComponentFixture<MenuItemsFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TableComponent]
+      imports: [MenuItemsFormComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(TableComponent);
+    fixture = TestBed.createComponent(MenuItemsFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

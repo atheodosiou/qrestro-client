@@ -9,6 +9,11 @@ import { ITableCol } from '../../shared/models/table-col.interface';
 import { MENU_ITEM_COLUMNS } from './menu-items.constats';
 import { MenuItemTableComponent } from './menu-item-table/menu-item-table.component';
 import { JsonPipe } from '@angular/common';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { ToggleButtonModule } from 'primeng/togglebutton';
+import { FileUploadEvent, FileUploadModule } from 'primeng/fileupload';
+
 @Component({
   selector: 'app-menu-items',
   imports: [
@@ -17,6 +22,10 @@ import { JsonPipe } from '@angular/common';
     ButtonModule,
     MenuItemTableComponent,
     JsonPipe,
+    InputTextModule,
+    InputNumberModule,
+    ToggleButtonModule,
+    FileUploadModule,
   ],
   templateUrl: './menu-items.component.html',
   styleUrl: './menu-items.component.scss',
@@ -24,16 +33,33 @@ import { JsonPipe } from '@angular/common';
 export class MenuItemsComponent {
   menuItems = signal<IMenuItem[]>(MOCK_MENU_ITEMS);
   menuItemsCols = signal<ITableCol[]>(MENU_ITEM_COLUMNS);
-  isDarawerVisible = false;
   selectedRow = signal<IMenuItem | null>(null);
+  isEditMode = signal<boolean>(false);
 
-  setSelectedRow(data: any) {
-    if (!data) {
-      this.selectedRow.set(null);
-      this.isDarawerVisible = false;
-      return;
+  isDarawerVisible = false;
+  uploadedFiles: any[] = [];
+
+  onUpload(event: FileUploadEvent) {
+    for (let file of event.files) {
+      this.uploadedFiles.push(file);
     }
-    this.selectedRow.set(data as IMenuItem);
+
+    // this.messageService.add({severity: 'info', summary: 'File Uploaded', detail: ''});
+  }
+
+  addNewItem() {
+    this.isEditMode.set(false);
     this.isDarawerVisible = true;
+  }
+  
+  editRow(data: IMenuItem) {
+    this.isEditMode.set(true);
+    this.selectedRow.set(data);
+    this.isDarawerVisible = true;
+  }
+
+  deleteRow(data: IMenuItem) {
+    this.isEditMode.set(false);
+    this.selectedRow.set(data);
   }
 }

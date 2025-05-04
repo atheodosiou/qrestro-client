@@ -1,11 +1,10 @@
 import { Component, signal } from '@angular/core';
 import { PageHeaderComponent } from '../../layout/page-header/page-header.component';
-import { TableComponent } from '../../shared/components/table/table.component';
 import { ITableCol } from '../../shared/models/table-col.interface';
 
 @Component({
   selector: 'app-vanue',
-  imports: [PageHeaderComponent, TableComponent],
+  imports: [PageHeaderComponent],
   templateUrl: './vanue.component.html',
   styleUrl: './vanue.component.scss'
 })

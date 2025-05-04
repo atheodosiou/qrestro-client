@@ -1,9 +1,0 @@
-<p-table [columns]="tableColumns()" [value]="data()" [tableStyle]="{ 'min-width': '50rem' }">
-  <ng-template pTemplate="header" let-columns>
-    <ng-container *ngTemplateOutlet="headerTemplate; context: { columns: columns }" />
-  </ng-template>
-
-  <ng-template pTemplate="body" let-rowData let-columns="columns">
-    <ng-container *ngTemplateOutlet="bodyTemplate; context: { rowData: rowData, columns: columns }" />
-  </ng-template>
-</p-table>
