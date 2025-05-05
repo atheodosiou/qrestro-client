@@ -22,9 +22,11 @@
 <pre>
     {{ selectedRow() | json }}
 </pre>
+
+<!-- [header]="selectedRow() ? selectedRow()?.name : 'Add new menu item'" -->
 <p-drawer
   [(visible)]="isDarawerVisible"
-  [header]="selectedRow() ? selectedRow()?.name : 'Add new menu item'"
+  header="Add new menu item"
   position="right"
   styleClass="!w-full md:!w-[45rem] lg:!w-[60rem]"
 >
