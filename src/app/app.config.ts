@@ -13,6 +13,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { LOCALE_ID } from '@angular/core';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -32,5 +33,7 @@ export const appConfig: ApplicationConfig = {
         },
       },
     }),
+    ConfirmationService,
+    MessageService,
   ],
 };

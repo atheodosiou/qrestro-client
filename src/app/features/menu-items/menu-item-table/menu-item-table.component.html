@@ -68,7 +68,7 @@
         } @else if (col.field==='imageUrl') {
         <td>
           <img
-            [src]="rowData['imageUrl']"
+            [src]="rowData['imageUrl'] ?? 'https://placehold.co/40x40'"
             class="rounded-sm h-[40px] w-[40px] bg-cover"
             alt="menu item image"
           />
@@ -76,13 +76,25 @@
         } @else if (col.field==='isAvailable') {
         <td>
           <span
-            class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+            class="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-medium w-full"
             [ngClass]="{
               'bg-green-100 text-green-800': rowData['isAvailable'],
               'bg-red-100 text-red-800': !rowData['isAvailable']
             }"
           >
             {{ rowData["isAvailable"] ? "Available" : "Unavailable" }}
+          </span>
+        </td>
+        }@else if (col.field==='isGlobal') {
+        <td>
+          <span
+            class="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-medium w-full"
+            [ngClass]="{
+              'bg-blue-100 text-blue-800': rowData['isGlobal'],
+              'bg-orange-100 text-orange-800': !rowData['isGlobal']
+            }"
+          >
+            {{ rowData["isGlobal"] ? "Yes" : "No" }}
           </span>
         </td>
         } @else if (col.field==='price') {

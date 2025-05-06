@@ -1,1 +1,97 @@
-<p>menu-items-form works!</p>
+<form
+  [formGroup]="form"
+  (ngSubmit)="submit()"
+  class="flex flex-col justify-between h-full gap-6"
+>
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+    <div>
+      <label for="name">Name</label>
+      <input pInputText id="name" formControlName="name" class="w-full" />
+    </div>
+
+    <div>
+      <label for="description">Description</label>
+      <input
+        pInputText
+        id="description"
+        formControlName="description"
+        class="w-full"
+      />
+    </div>
+
+    <div>
+      <label for="price">Price</label>
+      <p-inputnumber
+        inputId="price"
+        formControlName="price"
+        styleClass="w-full"
+        [minFractionDigits]="2"
+        [maxFractionDigits]="2"
+      />
+    </div>
+
+    <div>
+      <label for="isGlobal">Global Item</label>
+      <p-togglebutton
+        id="isGlobal"
+        formControlName="isGlobal"
+        onLabel="Yes"
+        offLabel="No"
+        styleClass="w-full"
+      />
+    </div>
+
+    <div>
+      <label for="isAvailable">Availability</label>
+      <p-togglebutton
+        id="isAvailable"
+        formControlName="isAvailable"
+        onLabel="Available"
+        offLabel="Unavailable"
+        styleClass="w-full"
+      />
+    </div>
+
+    <div class="lg:col-span-3">
+      <label>Image</label>
+      <p-fileupload
+        name="demo[]"
+        url="https://www.primefaces.org/cdn/api/upload.php"
+        (onUpload)="onUpload($event)"
+        [multiple]="true"
+        accept="image/*"
+        maxFileSize="1000000"
+        mode="advanced"
+      >
+        <ng-template #empty>
+          <div>Drag and drop files here to upload.</div>
+        </ng-template>
+        <ng-template #content>
+          @if (uploadedFiles().length) {
+          <ul>
+            @for (file of uploadedFiles(); track $index) {
+            <li>{{ file.name }} - {{ file.size }} bytes</li>
+            }
+          </ul>
+          }
+        </ng-template>
+      </p-fileupload>
+    </div>
+  </div>
+
+  <div class="flex flex-row items-center justify-end gap-2">
+    <p-button
+      label="Cancel"
+      size="small"
+      severity="secondary"
+      (onClick)="cancel()"
+      styleClass="w-[100px]"
+    ></p-button>
+    <p-button
+      label="{{ isEditMode() ? 'Update' : 'Create' }}"
+      size="small"
+      (onClick)="submit()"
+      styleClass="w-[100px]"
+    ></p-button>
+  </div>
+</form>

@@ -6,5 +6,6 @@ export const MENU_ITEM_COLUMNS: ITableCol[] = [
     { field: 'description', header: 'Description', style: { 'min-width': '300px' } },
     { field: 'price', header: 'Price', style: { width: '120px' } },
     { field: 'isAvailable', header: 'Available', style: { width: '120px' } },
+    { field: 'isGlobal', header: 'Global', style: { width: '100px' } },
     { field: 'actions', header: 'Actions', style: { width: '100px' } },
 ];

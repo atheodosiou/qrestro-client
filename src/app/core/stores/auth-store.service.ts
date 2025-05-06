@@ -13,6 +13,7 @@ export class AuthStore {
         try {
             const { exp } = jwtDecode<{ exp: number }>(rawToken);
             const now = Math.floor(Date.now() / 1000);
+            console.log("exp",exp)
             return exp > now && !!this.user();
         } catch {
             return false;
