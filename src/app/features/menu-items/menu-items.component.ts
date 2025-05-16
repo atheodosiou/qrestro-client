@@ -14,6 +14,8 @@ import { MenuItemsFormComponent } from './menu-items-form/menu-items-form.compon
 import { MENU_ITEM_COLUMNS } from './menu-items.constats';
 import { MenuItemsService } from './menu-items.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { UploadService } from '../../core/services/upload.service';
+import { switchMap } from 'rxjs';
 @Component({
   selector: 'app-menu-items',
   imports: [
@@ -35,6 +37,7 @@ export class MenuItemsComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
+  private readonly uploadService = inject(UploadService);
 
   menuItems = signal<IMenuItem[]>([]);
   menuItemsCols = signal<ITableCol[]>(MENU_ITEM_COLUMNS);
@@ -46,14 +49,6 @@ export class MenuItemsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadMenuItems();
-  }
-
-  onUpload(event: FileUploadEvent) {
-    for (let file of event.files) {
-      this.uploadedFiles.push(file);
-    }
-
-    // this.messageService.add({severity: 'info', summary: 'File Uploaded', detail: ''});
   }
 
   addNewItem() {
@@ -68,6 +63,7 @@ export class MenuItemsComponent implements OnInit {
   }
 
   deleteRow(data: IMenuItem) {
+    const imageUrl = data.imageUrl?.split('/uploads/')[1];
     this.confirmationService.confirm({
       message: 'Are you sure that you want to delete this menu item?',
       header: 'Confirmation',
@@ -84,36 +80,45 @@ export class MenuItemsComponent implements OnInit {
         severity: 'danger',
       },
       accept: () => {
-        this.menuItemService
-          .deleteItem(this.selectedRow()?._id!)
-          .pipe(takeUntilDestroyed(this.destroyRef))
-          .subscribe({
-            next: (result) => {
-              console.log(result);
-              const deletedId = this.selectedRow()?._id;
-              const updatedItems = this.menuItems().filter(
-                (item) => item._id !== deletedId
-              );
-              this.menuItems.set(updatedItems);
-              this.messageService.add({
-                severity: 'info',
-                summary: 'Confirmed',
-                detail: 'Menu item deleted successfully',
-              });
-            },
-            error: (e) => {
-              this.selectedRow.set(null);
-              this.messageService.add({
-                severity: 'error',
-                summary: 'Failed',
-                detail: 'Failed to delete menu item',
-                life: 3000,
-              });
-            },
-            complete: () => {
-              this.selectedRow.set(null);
-            },
-          });
+        let observable;
+        if (imageUrl) {
+          observable = this.uploadService.removeUploadedImage(imageUrl!).pipe(
+            switchMap(() =>
+              this.menuItemService.deleteItem(this.selectedRow()?._id!)
+            ),
+            takeUntilDestroyed(this.destroyRef)
+          );
+        } else {
+          observable = this.menuItemService
+            .deleteItem(this.selectedRow()?._id!)
+            .pipe(takeUntilDestroyed(this.destroyRef));
+        }
+        observable.subscribe({
+          next: () => {
+            const deletedId = this.selectedRow()?._id;
+            const updatedItems = this.menuItems().filter(
+              (item) => item._id !== deletedId
+            );
+            this.menuItems.set(updatedItems);
+            this.messageService.add({
+              severity: 'info',
+              summary: 'Confirmed',
+              detail: 'Menu item deleted successfully',
+            });
+          },
+          error: (e) => {
+            this.selectedRow.set(null);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Failed',
+              detail: 'Failed to delete menu item',
+              life: 3000,
+            });
+          },
+          complete: () => {
+            this.selectedRow.set(null);
+          },
+        });
       },
       reject: () => {
         this.messageService.add({
