@@ -1,5 +1,6 @@
 import {
   Component,
+  DestroyRef,
   computed,
   effect,
   inject,
@@ -9,11 +10,14 @@ import {
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
-import { FileUploadModule } from 'primeng/fileupload';
+import { FileUploadEvent, FileUploadModule } from 'primeng/fileupload';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { IMenuItem } from '../../../shared/models/menu-item.interface';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { UploadService } from '../../../core/services/upload.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-menu-items-form',
@@ -34,7 +38,12 @@ export class MenuItemsFormComponent {
   readonly formSubmit = output<{ isEdit: boolean; data: Partial<IMenuItem> }>();
   readonly dismiss = output<void>();
   readonly isEditMode = computed(() => !!this.item());
+  readonly messageService = inject(MessageService);
+  readonly confirmationService = inject(ConfirmationService);
+  private readonly uploadService = inject(UploadService);
+  private readonly destroyRef = inject(DestroyRef);
 
+  uploadedImageUrl = signal<string | null>(null);
   uploadedFiles = signal<File[]>([]);
   form = this.fb.nonNullable.group({
     name: ['', Validators.required],
@@ -60,10 +69,16 @@ export class MenuItemsFormComponent {
     });
   }
 
-  onUpload(event: any) {
+  onUpload(event: FileUploadEvent) {
     const files: File[] = event.files;
     this.uploadedFiles.set(files);
-    const uploadedImageUrl = files[0]?.name ?? null;
+    const uploadedImageUrl = (event.originalEvent as any).body.url;
+    this.uploadedImageUrl.set(uploadedImageUrl);
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Upload',
+      detail: 'Image uploaded successfully',
+    });
     this.form.patchValue({ imageUrl: uploadedImageUrl });
   }
 
@@ -76,11 +91,104 @@ export class MenuItemsFormComponent {
 
       this.formSubmit.emit({ isEdit: this.isEditMode(), data: result });
       this.form.reset();
+      this.uploadedFiles.set([]);
+    } else {
+      console.log('invalid form', this.form.value);
     }
   }
 
   cancel() {
-    this.form.reset();
-    this.dismiss.emit();
+    if (!this.uploadedImageUrl()) {
+      this.form.reset();
+      this.dismiss.emit();
+      this.uploadedFiles.set([]);
+    } else {
+      this.confirmationService.confirm({
+        message:
+          'Are you sure that you want to stop the prccess and delete the uploaded image?',
+        header: 'Confirmation',
+        closable: false,
+        closeOnEscape: false,
+        icon: 'pi pi-exclamation-triangle',
+        rejectButtonProps: {
+          label: 'Cancel',
+          severity: 'danger',
+          outlined: true,
+        },
+        acceptButtonProps: {
+          label: 'Delete',
+        },
+        accept: () => {
+          const imageUrl = this.uploadedImageUrl()?.split('/uploads/')[1];
+          this.uploadService
+            .removeUploadedImage(imageUrl!)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+              next: () => {
+                this.messageService.add({
+                  severity: 'info',
+                  summary: 'Confirmed',
+                  detail: 'Image deleted successfully',
+                });
+                this.form.reset();
+                this.dismiss.emit();
+                this.uploadedImageUrl.set(null);
+                this.uploadedFiles.set([]);
+              },
+              error: (error: any) => {
+                console.error(error);
+                this.messageService.add({
+                  severity: 'danger',
+                  summary: 'Error',
+                  detail: 'Faild to delete image.',
+                });
+              },
+            });
+        },
+      });
+    }
+  }
+
+  delteImageAndUpdateProduct(url: string | null | undefined) {
+    if (!url) return;
+    const filename = url.split('/uploads/')[1];
+    this.confirmationService.confirm({
+      message: 'Are you sure that you want to delete this image?',
+      header: 'Confirmation',
+      closable: false,
+      closeOnEscape: false,
+      icon: 'pi pi-exclamation-triangle',
+      rejectButtonProps: {
+        label: 'Cancel',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Delete',
+        severity: 'danger',
+      },
+      accept: () => {
+        this.uploadService
+          .removeUploadedImage(filename!)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            next: () => {
+              this.messageService.add({
+                severity: 'info',
+                summary: 'Confirmed',
+                detail: 'Image deleted successfully',
+              });
+              this.form.get('imageUrl')?.reset();
+            },
+            error: (error: any) => {
+              console.error(error);
+              this.messageService.add({
+                severity: 'danger',
+                summary: 'Error',
+                detail: 'Faild to delete image.',
+              });
+            },
+          });
+      },
+    });
   }
 }

@@ -3,7 +3,6 @@ import { RouterOutlet } from '@angular/router';
 import { AuthService } from './core/services/auth.service';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
-
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, ConfirmDialogModule, ToastModule],

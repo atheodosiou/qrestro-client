@@ -68,7 +68,11 @@
         } @else if (col.field==='imageUrl') {
         <td>
           <img
-            [src]="rowData['imageUrl'] ?? 'https://placehold.co/40x40'"
+            [src]="
+              rowData['imageUrl']
+                ? rowData['imageUrl']
+                : 'https://placehold.co/40x40'
+            "
             class="rounded-sm h-[40px] w-[40px] bg-cover"
             alt="menu item image"
           />

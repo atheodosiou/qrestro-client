@@ -54,9 +54,26 @@
 
     <div class="lg:col-span-3">
       <label>Image</label>
+      @if(form.get('imageUrl')?.value){
+      <div class="flex flex-row items-center justify-between gap-4 mt-4">
+        <img
+          class="w-16 h-16 rounded-lg bg-cover object-fit"
+          [src]="form.get('imageUrl')?.value"
+          alt="product image"
+        />
+        <p-button
+          (onClick)="delteImageAndUpdateProduct(form.get('imageUrl')?.value)"
+          icon="pi pi-trash"
+          severity="danger"
+          size="small"
+          [rounded]="true"
+          [text]="true"
+        />
+      </div>
+      } @else {
       <p-fileupload
-        name="demo[]"
-        url="https://www.primefaces.org/cdn/api/upload.php"
+        name="file"
+        url="http://localhost:3000/api/upload/image"
         (onUpload)="onUpload($event)"
         [multiple]="true"
         accept="image/*"
@@ -76,6 +93,7 @@
           }
         </ng-template>
       </p-fileupload>
+      }
     </div>
   </div>
 
